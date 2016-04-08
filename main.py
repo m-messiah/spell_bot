@@ -19,54 +19,24 @@ ENG = (97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
        112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122)
 
 
-def botan_track(chat_id, event, message):
+def yaspell(d):
     try:
-        botan_url = "https://api.botan.io/track?"
-        botan_url += "token=j_UZnN7wzukO2mVm0bhKntmBuuNsHEEZ&"
-        botan_url += "uid=%s&" % chat_id
-        botan_url += "name=%s" % event
-        botan = urlfetch.fetch(botan_url,
-                               payload=json.encode(message),
-                               method=urlfetch.POST,
-                               headers={"Content-Type": "application/json"})
-        if botan.status_code == 200:
-            response = json.decode(botan.content)
-            if response['status'] == 'accepted':
-                return True
-
-        return False
-    except:
-        return False
-
-
-def yaspell(text):
-    try:
+        items = d.items()
         yaspeller = urlfetch.fetch(
             'http://speller.yandex.net/services/spellservice.json/checkText',
-            payload=urlencode({'text': text.encode("utf8")}),
+            payload=urlencode({'text': [t[1].encode("utf8") for t in items]}),
             method=urlfetch.POST
         )
-        correct_text = text
         if yaspeller.status_code == 200:
-            for w in json.decode(yaspeller.content):
+            for i, item in enumerate(json.decode(yaspeller.content)):
                 try:
-                    correct_text = correct_text.replace(w['word'], w['s'][0])
+                    items[i][1] = items[i][1].replace(item['word'],
+                                                      item['s'][0])
                 except:
                     pass
-        return correct_text
+        return items
     except:
-        return u""
-
-
-def correct_spell(text):
-    correct_text = yaspell(text)
-    return {
-        'type': 'article',
-        'id': "0",
-        'title': 'YAspell',
-        'message_text': correct_text,
-        'description': correct_text,
-    }
+        return None
 
 
 def correct_qwerty_keymap(text):
@@ -90,14 +60,7 @@ def correct_qwerty_keymap(text):
         if eng_letters.search(text.lower()):
             abc, key = key, abc
         trans = dict(zip(abc, key))
-        result = yaspell(text.translate(trans))
-        return {
-            'type': 'article',
-            'id': "1",
-            'title': 'qwerty',
-            'message_text': result,
-            'description': result,
-        }
+        return text.translate(trans)
     except:
         return None
 
@@ -123,14 +86,7 @@ def correct_mac_keymap(text):
         if eng_letters.search(text.lower()):
             abc, key = key, abc
         trans = dict(zip(abc, key))
-        result = yaspell(text.translate(trans))
-        return {
-            'type': 'article',
-            'id': "2",
-            'title': 'mac',
-            'message_text': result,
-            'description': result,
-        }
+        return text.translate(trans)
     except:
         return None
 
@@ -163,21 +119,28 @@ class MainPage(webapp2.RequestHandler):
                 if '/start' in message['text'] or '/help' in message['text']:
                     output = u"Привет! Я буду исправлять " \
                              u"твои ошибки в режиме inline"
-                    botan_track(message['chat']['id'], '/start', message)
                     response = {'method': "sendMessage",
                                 'chat_id': message['chat']['id'],
                                 'text': output}
         elif 'inline_query' in update:
             message = update['inline_query']
-            botan_track(message['from']['id'], 'inline', message)
             if len(message['query']) > 3:
-                query_results = [correct_spell(message['query']),
-                                 correct_qwerty_keymap(message['query']),
-                                 correct_mac_keymap(message['query'])]
+                query_results = {
+                    'spell': message['query'],
+                    'qwerty': correct_qwerty_keymap(message['query']),
+                    'mac': correct_mac_keymap(message['query'])
+                }
+                results = [{
+                    'type': 'article',
+                    'id': "%s" % i,
+                    'title': v[0],
+                    'message_text': v[1],
+                    'description': v[1],
+                } for i, v in enumerate(yaspell(query_results))]
                 response = {'method': 'answerInlineQuery',
                             'inline_query_id': message['id'],
                             'cache_time': 5,
-                            'results': json.encode(query_results)}
+                            'results': json.encode(results)}
 
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.encode(response if response else {}))

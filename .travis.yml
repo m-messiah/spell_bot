@@ -16,6 +16,7 @@ before_deploy:
 deploy:
   provider: gae
   skip_cleanup: true
+  version: prod
   keyfile: client_secret.json
   project: spell-bot
   default: true
