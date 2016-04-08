@@ -20,11 +20,13 @@ ENG = (97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
 
 
 def yaspell(items):
-    try:
+    # try:
         logging.debug(items)
         yaspeller = urlfetch.fetch(
             'http://speller.yandex.net/services/spellservice.json/checkTexts',
-            payload=urlencode({'text': [t[1].encode("utf8") for t in items]}),
+            payload=urlencode(
+                {'text[]': [t[1].encode('utf8') for t in items]},
+                True),
             method=urlfetch.POST
         )
         if yaspeller.status_code == 200:
@@ -37,8 +39,8 @@ def yaspell(items):
                         pass
         logging.debug(items)
         return items
-    except:
-        return []
+    # except:
+    #     return []
 
 
 def correct_qwerty_keymap(text):
