@@ -21,18 +21,21 @@ ENG = (97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
 
 def yaspell(items):
     try:
+        logging.debug(items)
         yaspeller = urlfetch.fetch(
             'http://speller.yandex.net/services/spellservice.json/checkTexts',
             payload=urlencode({'text': [t[1].encode("utf8") for t in items]}),
             method=urlfetch.POST
         )
         if yaspeller.status_code == 200:
+            logging.debug(json.decode(yaspeller.content))
             for i, item in enumerate(json.decode(yaspeller.content)):
                 for w in item:
                     try:
                         items[i][1] = items[i][1].replace(w['word'], w['s'][0])
                     except:
                         pass
+        logging.debug(items)
         return items
     except:
         return []
