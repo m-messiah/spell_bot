@@ -120,7 +120,9 @@ class MainPage(webapp2.RequestHandler):
             if 'chat' in message and 'text' in message:
                 if '/start' in message['text'] or '/help' in message['text']:
                     output = u"Привет! Я буду исправлять " \
-                             u"твои ошибки в режиме inline"
+                             u"твои ошибки в режиме inline " \
+                             u"(в любое время можно ввести `@spell_bot сообщение`, " \
+                             u"и я предложу исправления)"
                     response = {'method': "sendMessage",
                                 'chat_id': message['chat']['id'],
                                 'text': output}
