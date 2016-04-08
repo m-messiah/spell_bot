@@ -28,11 +28,11 @@ def yaspell(items):
         )
         if yaspeller.status_code == 200:
             for i, item in enumerate(json.decode(yaspeller.content)):
-                try:
-                    items[i][1] = items[i][1].replace(item['word'],
-                                                      item['s'][0])
-                except:
-                    pass
+                for w in item:
+                    try:
+                        items[i][1] = items[i][1].replace(w['word'], w['s'][0])
+                    except:
+                        pass
         return items
     except:
         return []
