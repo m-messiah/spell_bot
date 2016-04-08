@@ -34,6 +34,8 @@ def yaspell(items):
             for i, item in enumerate(json.decode(yaspeller.content)):
                 for w in item:
                     try:
+                        logging.debug(items[i][1])
+                        logging.debug(w['word'])
                         items[i][1] = items[i][1].replace(w['word'], w['s'][0])
                     except:
                         pass
