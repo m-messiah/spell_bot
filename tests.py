@@ -120,8 +120,7 @@ class TestApp(TestCase):
                 json.decode(response.body),
                 {
                     'method': 'sendMessage',
-                    'text': u"Привет! Я буду исправлять твои "
-                            u"ошибки в режиме inline",
+                    'text': u"Привет! Я буду исправлять твои ошибки в режиме inline (в любое время можно ввести `@spell_bot сообщение`, и я предложу исправления)",
                     'chat_id': -11812986,
                 }
         )
