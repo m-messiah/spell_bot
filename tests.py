@@ -1,7 +1,12 @@
 # coding=utf-8
 import sys
+# local
+sys.path.insert(1, '/usr/local/google_appengine')
+sys.path.insert(1, '/usr/local/google_appengine/lib/yaml/lib')
+# travis
 sys.path.insert(1, 'google_appengine')
 sys.path.insert(1, 'google_appengine/lib/yaml/lib')
+
 sys.path.insert(1, './lib')
 
 
@@ -148,7 +153,7 @@ class TestApp(TestCase):
                 u"message_text": u"\u0441\u0442\u0440\u0442\u0430\u043d\u043d\u044b\u0439, \u0442\u043a\u0435\u0441\u0442",
                 u"type": u"article",
                 u"id": u"0",
-                u"title": u"YAspell",
+                u"title": u"spell",
                 u"description": u"\u0441\u0442\u0440\u0442\u0430\u043d\u043d\u044b\u0439, \u0442\u043a\u0435\u0441\u0442"
             },
             {

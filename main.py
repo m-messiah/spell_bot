@@ -19,9 +19,8 @@ ENG = (97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
        112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122)
 
 
-def yaspell(d):
+def yaspell(items):
     try:
-        items = d.items()
         yaspeller = urlfetch.fetch(
             'http://speller.yandex.net/services/spellservice.json/checkText',
             payload=urlencode({'text': [t[1].encode("utf8") for t in items]}),
@@ -125,11 +124,11 @@ class MainPage(webapp2.RequestHandler):
         elif 'inline_query' in update:
             message = update['inline_query']
             if len(message['query']) > 3:
-                query_results = {
-                    'spell': message['query'],
-                    'qwerty': correct_qwerty_keymap(message['query']),
-                    'mac': correct_mac_keymap(message['query'])
-                }
+                query_results = [
+                    ('spell', message['query']),
+                    ('qwerty', correct_qwerty_keymap(message['query'])),
+                    ('mac', correct_mac_keymap(message['query']))
+                ]
                 results = [{
                     'type': 'article',
                     'id': "%s" % i,
