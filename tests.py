@@ -1,7 +1,7 @@
 # coding=utf-8
 import sys
-sys.path.insert(1, '/usr/local/google_appengine')
-sys.path.insert(1, '/usr/local/google_appengine/lib/yaml/lib')
+sys.path.insert(1, 'google_appengine')
+sys.path.insert(1, 'google_appengine/lib/yaml/lib')
 sys.path.insert(1, './lib')
 
 
