@@ -6,10 +6,10 @@ before_install:
 install:
 - pip install -r requirements.txt -t lib/
 script:
-- echo "No Script to run"
+- nosetests
 deploy:
   provider: gae
   skip_cleanup: true
-  keyfile: client-secret.json
+  keyfile: client_secret.json
   project: spell-bot
   default: true
